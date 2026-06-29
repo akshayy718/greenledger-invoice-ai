@@ -757,4 +757,7 @@ def remove_link(org_id: int, link_id: int, user=Depends(current_user)):
 
 
 # Serve uploaded files so the dashboard can preview them.
+# Render (and any fresh checkout) won't have this folder, since it's
+# excluded from git. Create it automatically so startup never crashes.
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
