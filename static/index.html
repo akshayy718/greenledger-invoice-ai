@@ -221,6 +221,7 @@
     <div class="topbar">
       <div><h1 class="display">Invoices</h1><div class="sub" id="invSub"></div></div>
       <div class="actions">
+        <button class="btn" onclick="refreshInvoices()">Refresh</button>
         <button class="btn" id="bulkDeleteBtn" onclick="bulkDelete()" style="display:none; color:var(--bad); border-color:var(--bad-soft);">Delete selected</button>
         <label class="btn primary" style="cursor:pointer;">Upload invoice
           <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg" style="display:none" onchange="doUpload()">
@@ -390,6 +391,11 @@ async function bulkDelete(){
   await jform(`/api/orgs/${ORG}/invoices/bulk_delete`,{ids:[...SELECTED_IDS].join(',')});
   showToast(`Deleted ${SELECTED_IDS.size} invoice(s).`);
   await loadInvoices(); await loadOverview();
+}
+async function refreshInvoices(){
+  await loadInvoices();
+  await loadOverview();
+  showToast('Invoices refreshed.');
 }
 async function doUpload(){
   const f=$('#fileInput').files[0]; if(!f) return;
@@ -602,6 +608,15 @@ document.addEventListener('keydown', e=>{
 function esc(s){ return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function fmtDate(iso){ if(!iso) return ''; try{ return new Date(iso).toLocaleString(); }catch{ return iso; } }
 boot();
+
+// Quietly check for new invoices every 20s while looking at the Invoices tab,
+// so a Telegram-sourced upload shows up on its own without a manual refresh.
+// Skipped while the review drawer is open, so it never interrupts editing.
+setInterval(()=>{
+  const onInvoices = !$('#view-invoices').classList.contains('hidden');
+  const drawerOpen = $('#drawer').classList.contains('open');
+  if (onInvoices && !drawerOpen && ORG) loadInvoices();
+}, 20000);
 </script>
 </body>
 </html>
