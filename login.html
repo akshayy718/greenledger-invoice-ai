@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Greenledger AI — Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6F8F6; --surface:#FFFFFF; --border:#E5EAE5; --text:#16201A; --muted:#5E6B62;
+    --accent:#1F6F4F; --accent-deep:#15553D; --accent-bright:#2B8A63; --bad:#C0392B;
+    --shadow:0 12px 32px rgba(20,40,30,.12);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;min-height:100vh;font-family:'Inter',system-ui,sans-serif;background:var(--bg);
+    color:var(--text);display:flex;align-items:center;justify-content:center;padding:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    box-shadow:var(--shadow);width:min(400px,100%);padding:32px;}
+  .brand{display:flex;align-items:center;gap:11px;margin-bottom:24px;}
+  .brand .mark{width:36px;height:36px;border-radius:10px;
+    background:linear-gradient(155deg,var(--accent-bright),var(--accent-deep));
+    display:flex;align-items:center;justify-content:center;}
+  .brand .mark svg{width:19px;height:19px;stroke:#fff;}
+  .brand .name{font-size:18px;font-weight:700;line-height:1.1;}
+  .brand .name small{display:block;font-size:10px;font-weight:600;color:#94A399;letter-spacing:.1em;}
+  h1{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13.5px;margin-bottom:22px;}
+  label{display:block;font-size:12.5px;color:var(--muted);font-weight:500;margin-bottom:6px;margin-top:14px;}
+  input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;}
+  input:focus{outline:none;border-color:var(--accent);}
+  button{width:100%;margin-top:22px;padding:11px;background:var(--accent);color:#fff;border:none;
+    border-radius:9px;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;}
+  button:hover{background:var(--accent-deep);}
+  button:disabled{opacity:.6;cursor:default;}
+  .toggle{text-align:center;margin-top:18px;font-size:13px;color:var(--muted);}
+  .toggle a{color:var(--accent);font-weight:600;cursor:pointer;text-decoration:none;}
+  .err{background:#FAE6E2;color:var(--bad);font-size:13px;padding:9px 12px;border-radius:8px;margin-top:16px;display:none;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C12 2 5 6 5 12c0 3.5 2.5 6 5 7 0-2 1-3.5 2-4.5-1 2-1 5 0 7 1-2 2-3.5 2-7 2.5-1 5-3.5 5-7 0-6-7-10-7-10-1.5 2-1.5 5 0 4.5-1.5-1-2-3-2-4.5z"/></svg></span>
+      <span class="name">Greenledger<small>AI</small></span>
+    </div>
+
+    <h1 id="title">Welcome back</h1>
+    <div class="sub" id="subtitle">Sign in to your account.</div>
+
+    <div id="nameRow" style="display:none;">
+      <label>Your name</label>
+      <input type="text" id="name" placeholder="Akshay Santhosh">
+    </div>
+    <label>Email</label>
+    <input type="email" id="email" placeholder="you@company.com">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••">
+
+    <div class="err" id="err"></div>
+
+    <button id="submitBtn" onclick="submitForm()">Sign in</button>
+
+    <div class="toggle" id="toggle">
+      Don't have an account? <a onclick="setMode('signup')">Sign up</a>
+    </div>
+  </div>
+
+<script>
+let MODE = 'login';
+function setMode(m){
+  MODE = m;
+  document.getElementById('err').style.display='none';
+  if(m==='signup'){
+    document.getElementById('title').textContent='Create your account';
+    document.getElementById('subtitle').textContent='Start processing invoices in minutes.';
+    document.getElementById('nameRow').style.display='block';
+    document.getElementById('submitBtn').textContent='Create account';
+    document.getElementById('toggle').innerHTML="Already have an account? <a onclick=\"setMode('login')\">Sign in</a>";
+  } else {
+    document.getElementById('title').textContent='Welcome back';
+    document.getElementById('subtitle').textContent='Sign in to your account.';
+    document.getElementById('nameRow').style.display='none';
+    document.getElementById('submitBtn').textContent='Sign in';
+    document.getElementById('toggle').innerHTML="Don't have an account? <a onclick=\"setMode('signup')\">Sign up</a>";
+  }
+}
+function showErr(msg){
+  const e=document.getElementById('err'); e.textContent=msg; e.style.display='block';
+}
+async function submitForm(){
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  const name=document.getElementById('name').value.trim();
+  if(!email||!password){ showErr('Please enter your email and password.'); return; }
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true; btn.textContent='Please wait…';
+
+  const fd=new FormData();
+  fd.append('email',email); fd.append('password',password);
+  if(MODE==='signup') fd.append('name',name);
+  const url = MODE==='signup' ? '/api/auth/signup' : '/api/auth/login';
+
+  try{
+    const r=await fetch(url,{method:'POST',body:fd});
+    const data=await r.json();
+    if(!r.ok){ showErr(data.detail||'Something went wrong.'); btn.disabled=false; btn.textContent = MODE==='signup'?'Create account':'Sign in'; return; }
+    window.location='/';   // success -> go to dashboard
+  }catch(e){
+    showErr('Network error. Try again.');
+    btn.disabled=false; btn.textContent = MODE==='signup'?'Create account':'Sign in';
+  }
+}
+// Enter key submits
+document.addEventListener('keydown', e=>{ if(e.key==='Enter') submitForm(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Greenledger AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6F8F6; --surface:#FFFFFF; --border:#E5EAE5; --border-2:#D6DED6;
+    --text:#16201A; --muted:#5E6B62; --faint:#94A399;
+    --accent:#1F6F4F; --accent-soft:#E7F3EC; --accent-deep:#15553D; --accent-bright:#2B8A63;
+    --good:#1F6F4F; --good-soft:#E7F3EC; --warn:#B7791F; --warn-soft:#FBF1DC; --bad:#C0392B; --bad-soft:#FAE6E2;
+    --radius:12px;
+    --shadow-sm:0 1px 2px rgba(20,40,30,.05);
+    --shadow-md:0 4px 14px rgba(20,40,30,.07);
+    --shadow-lg:0 12px 32px rgba(20,40,30,.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px;
+    display:grid; grid-template-columns:236px 1fr; min-height:100vh;}
+  .tnum{font-variant-numeric:tabular-nums;}
+  button,input{font-family:inherit;}
+  .display{font-family:'Fraunces',serif; letter-spacing:-.01em;}
+
+  /* ---------- Sidebar ---------- */
+  aside{background:var(--surface); border-right:1px solid var(--border); padding:22px 16px; display:flex; flex-direction:column; gap:24px; position:sticky; top:0; height:100vh;}
+  .brand{font-size:16.5px; font-weight:700; display:flex; align-items:center; gap:10px; padding:2px 6px 4px;}
+  .brand .mark{width:30px;height:30px; border-radius:9px; background:linear-gradient(155deg,var(--accent-bright),var(--accent-deep)); display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); flex-shrink:0;}
+  .brand .mark svg{width:16px;height:16px; stroke:#fff;}
+  .brand .name{line-height:1.15;}
+  .brand .name small{display:block; font-size:9.5px; font-weight:600; color:var(--faint); letter-spacing:.1em; text-transform:uppercase;}
+  .org-switch select{width:100%; padding:9px 11px; border:1px solid var(--border); border-radius:9px; background:var(--bg); font-size:13px; font-weight:500; color:var(--text); cursor:pointer;}
+  nav{display:flex; flex-direction:column; gap:2px;}
+  nav button{text-align:left; background:transparent; border:none; color:var(--muted); font-size:13.5px; font-weight:500;
+    padding:9px 11px; border-radius:9px; cursor:pointer; display:flex; align-items:center; gap:11px; transition:.14s;}
+  nav button:hover{background:var(--bg); color:var(--text);}
+  nav button.active{background:var(--accent); color:#fff; font-weight:600; box-shadow:var(--shadow-md);}
+  nav button svg{width:16px;height:16px; flex-shrink:0;}
+  .side-foot{margin-top:auto; display:flex; flex-direction:column; gap:8px;}
+  .side-foot button{background:transparent; border:1px solid var(--border); color:var(--muted); padding:9px 11px; border-radius:9px; font-size:12.5px; cursor:pointer; font-weight:500; transition:.14s;}
+  .side-foot button:hover{border-color:var(--accent); color:var(--accent-deep); background:var(--accent-soft);}
+
+  /* ---------- Main ---------- */
+  main{padding:30px 40px; overflow-y:auto; height:100vh;}
+  .topbar{display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:26px; gap:14px; flex-wrap:wrap;}
+  .topbar h1{font-size:25px; font-weight:700; margin:0; letter-spacing:-.015em;}
+  .topbar .sub{color:var(--muted); font-size:13px; margin-top:4px;}
+  .actions{display:flex; gap:8px; flex-wrap:wrap;}
+  .btn{border:1px solid var(--border); background:var(--surface); color:var(--text); padding:9px 15px; border-radius:9px; font-size:13px; font-weight:500; cursor:pointer; transition:.14s; box-shadow:var(--shadow-sm);}
+  .btn:hover{border-color:var(--border-2); transform:translateY(-1px); box-shadow:var(--shadow-md);}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 2px 10px rgba(31,111,79,.25);}
+  .btn.primary:hover{background:var(--accent-deep); box-shadow:0 4px 16px rgba(31,111,79,.32);}
+  .btn:disabled{opacity:.45; cursor:default; transform:none; box-shadow:none;}
+  .hidden{display:none !important;}
+
+  /* ---------- Stat row ---------- */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:24px;}
+  .stat{background:var(--surface); padding:17px 19px; border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-sm); transition:.16s;}
+  .stat:hover{box-shadow:var(--shadow-md); transform:translateY(-1px);}
+  .stat .k{font-size:11.5px; color:var(--muted); font-weight:500;}
+  .stat .v{font-size:25px; font-weight:700; margin-top:7px; letter-spacing:-.015em;}
+  .stat.flag .v{color:var(--bad);}
+
+  .panel{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px 22px; margin-bottom:18px; box-shadow:var(--shadow-sm);}
+  .panel h3{font-size:14px; font-weight:600; margin:0 0 15px; color:var(--text);}
+  .barrow{display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:12.5px;}
+  .barrow .nm{width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text);}
+  .barrow .track{flex:1; height:7px; background:var(--bg); border-radius:5px; overflow:hidden;}
+  .barrow .fill{height:100%; background:linear-gradient(90deg,var(--accent-bright),var(--accent)); border-radius:5px;}
+  .barrow .amt{width:80px; text-align:right; color:var(--muted);}
+  .empty{padding:32px; text-align:center; color:var(--faint); font-size:13px;}
+  .muted{color:var(--muted);}
+
+  /* ---------- Invoice table ---------- */
+  .table-wrap{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-sm);}
+  table.itable{width:100%; border-collapse:collapse;}
+  table.itable th{text-align:left; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--faint); padding:12px 18px; border-bottom:1px solid var(--border); background:var(--bg);}
+  table.itable td{padding:14px 18px; border-bottom:1px solid var(--border); font-size:13.5px;}
+  table.itable tr:last-child td{border-bottom:none;}
+  table.itable tbody tr{cursor:pointer; transition:background .12s;}
+  table.itable tbody tr:hover{background:var(--accent-soft);}
+  .vname{font-weight:600;}
+  .vsub{font-size:11.5px; color:var(--faint); margin-top:1px;}
+  td.amt{font-weight:700; text-align:right;}
+  .pill{font-size:11px; padding:3px 10px; border-radius:20px; font-weight:600; display:inline-block;}
+  .pill.review{background:var(--warn-soft); color:var(--warn);}
+  .pill.approved{background:var(--good-soft); color:var(--good);}
+  .pill.dup{background:var(--bad-soft); color:var(--bad); margin-left:6px;}
+  .src-tag{font-size:11px; color:var(--faint);}
+
+  /* ---------- Slide-over ---------- */
+  .scrim2{position:fixed; inset:0; background:rgba(16,28,20,.32); backdrop-filter:blur(1px); z-index:60; opacity:0; pointer-events:none; transition:opacity .2s;}
+  .scrim2.open{opacity:1; pointer-events:auto;}
+  .drawer{position:fixed; top:0; right:0; height:100vh; width:min(480px,94vw); background:var(--surface);
+    box-shadow:var(--shadow-lg); transform:translateX(100%); transition:transform .22s cubic-bezier(.2,.8,.2,1); z-index:61;
+    display:flex; flex-direction:column;}
+  .drawer.open{transform:translateX(0);}
+  .dhead{display:flex; align-items:center; gap:8px; padding:14px 18px; border-bottom:1px solid var(--border); flex-shrink:0;}
+  .dhead .nav-arrows{display:flex; gap:6px;}
+  .iconbtn{height:32px; padding:0 11px; border:1px solid var(--border); background:var(--surface); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; color:var(--muted); font-size:12.5px; font-weight:500; transition:.12s;}
+  .iconbtn:hover{border-color:var(--accent); color:var(--accent-deep); background:var(--accent-soft);}
+  .iconbtn:disabled{opacity:.4; cursor:default; background:var(--surface); color:var(--muted);}
+  .iconbtn.close{width:32px; padding:0;}
+  .dhead .pos{font-size:12px; color:var(--faint); margin-left:4px;}
+  .dhead .close{margin-left:auto;}
+  .dbody{padding:18px; overflow-y:auto; flex:1;}
+  .dbody h2{font-size:17px; font-weight:700; margin:0 0 2px;}
+  .dbody .dmeta{font-size:12px; color:var(--muted); margin-bottom:14px;}
+  .preview{border:1px solid var(--border); border-radius:9px; overflow:hidden; margin-bottom:16px; background:var(--bg); max-height:220px;}
+  .preview img{width:100%; display:block;}
+  .preview embed{width:100%; height:220px;}
+  .dupwarn{background:var(--bad-soft); color:var(--bad); font-size:12.5px; padding:9px 12px; border-radius:8px; margin-bottom:14px; font-weight:500;}
+
+  .field{margin-bottom:13px;}
+  .field .fl{font-size:11px; color:var(--muted); font-weight:500; display:flex; justify-content:space-between; margin-bottom:5px;}
+  .field .fl .req{color:var(--bad);}
+  .field .fl .cf{font-size:10.5px;}
+  .field input{width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:13.5px; background:var(--surface);}
+  .field input:focus{outline:none; border-color:var(--accent);}
+  .field.low input{border-color:var(--warn); background:var(--warn-soft);}
+  .confdot{width:6px;height:6px;border-radius:50%; display:inline-block; margin-right:5px;}
+
+  .lineitems{margin-top:6px; border:1px solid var(--border); border-radius:8px; overflow:hidden;}
+  .lineitems table{width:100%; border-collapse:collapse; font-size:12px;}
+  .lineitems th{background:var(--bg); text-align:left; padding:7px 10px; font-size:10px; text-transform:uppercase; color:var(--faint); font-weight:600;}
+  .lineitems td{padding:7px 10px; border-top:1px solid var(--border);}
+  .lineitems td.num{text-align:right;}
+
+  .reext{display:flex; gap:7px; margin:16px 0 12px;}
+  .reext input{flex:1; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:12.5px;}
+  .dfoot{padding:14px 18px; border-top:1px solid var(--border); display:flex; gap:8px; flex-shrink:0;}
+  .dfoot .btn{flex:1;}
+
+  /* ---------- Fields / Telegram tables ---------- */
+  table.grid{width:100%; border-collapse:collapse;}
+  table.grid th{text-align:left; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--faint); padding:11px 16px; border-bottom:1px solid var(--border); background:var(--bg);}
+  table.grid td{padding:12px 16px; border-bottom:1px solid var(--border); font-size:13.5px; vertical-align:middle;}
+  table.grid tr:last-child td{border-bottom:none;}
+  .tag{font-size:11px; padding:3px 9px; border-radius:6px; background:var(--bg); color:var(--muted); font-weight:500;}
+  .tag.on{background:var(--good-soft); color:var(--good);}
+  .tag.req{background:var(--warn-soft); color:var(--warn); margin-left:5px;}
+
+  /* ---------- Modal ---------- */
+  .scrim{position:fixed; inset:0; background:rgba(20,20,25,.32); display:flex; align-items:center; justify-content:center; z-index:70; padding:20px;}
+  .modal{background:var(--surface); border-radius:16px; padding:24px; width:min(440px,100%); max-height:85vh; overflow-y:auto; box-shadow:var(--shadow-lg);}
+  .modal h3{font-size:16px; font-weight:700; margin:0 0 16px;}
+  .modal .field label{font-size:12px; color:var(--muted); display:block; margin-bottom:5px; font-weight:500;}
+  .modal input[type=text]{width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:13.5px;}
+  .row{display:flex; gap:9px; align-items:center;}
+  .audit-item{border:1px solid var(--border); border-radius:9px; padding:11px 13px; margin-bottom:9px;}
+  .audit-item .ah{display:flex; justify-content:space-between; font-size:11.5px; color:var(--muted); margin-bottom:6px;}
+  .audit-item .chg{font-size:12.5px;}
+  .audit-item .chg b{font-weight:600;}
+
+  /* ---------- Toast ---------- */
+  .toast-stack{position:fixed; bottom:22px; right:22px; z-index:90; display:flex; flex-direction:column; gap:8px; align-items:flex-end;}
+  .toast{background:var(--text); color:#fff; padding:11px 16px; border-radius:9px; font-size:13px; font-weight:500; box-shadow:var(--shadow-lg);
+    display:flex; align-items:center; gap:9px; opacity:0; transform:translateY(8px); transition:opacity .2s, transform .2s; max-width:320px;}
+  .toast.show{opacity:1; transform:translateY(0);}
+  .toast .tdot{width:7px;height:7px;border-radius:50%; flex-shrink:0;}
+  .toast.success .tdot{background:#4ADE80;}
+  .toast.error .tdot{background:#F87171;}
+
+  /* ---------- Onboarding banner ---------- */
+  .onboard{background:linear-gradient(135deg,var(--accent-soft),var(--surface)); border:1px solid var(--border); border-radius:var(--radius); padding:24px 26px; margin-bottom:22px; box-shadow:var(--shadow-sm);}
+  .onboard h2{font-size:17px; font-weight:700; margin:0 0 6px;}
+  .onboard p{font-size:13.5px; color:var(--muted); margin:0 0 14px; max-width:480px; line-height:1.6;}
+  .onboard .steps{display:flex; gap:18px; flex-wrap:wrap; margin-bottom:16px;}
+  .onboard .step{font-size:12.5px; color:var(--muted); display:flex; align-items:center; gap:7px;}
+  .onboard .step .num{width:20px;height:20px;border-radius:50%; background:var(--accent); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  @media (max-width:920px){ body{grid-template-columns:1fr;} aside{position:static;height:auto;} }
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand">
+    <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C12 2 5 6 5 12c0 3.5 2.5 6 5 7 0-2 1-3.5 2-4.5-1 2-1 5 0 7 1-2 2-3.5 2-7 2.5-1 5-3.5 5-7 0-6-7-10-7-10-1.5 2-1.5 5 0 4.5-1.5-1-2-3-2-4.5z"/></svg></span>
+    <span class="name">Greenledger<small>AI</small></span>
+  </div>
+  <div class="org-switch"><select id="orgSelect" onchange="onOrgChange()"></select></div>
+  <nav id="nav">
+    <button data-view="overview" class="active" onclick="go('overview')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Overview</button>
+    <button data-view="invoices" onclick="go('invoices')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h10l4 4v14H3V3z"/><path d="M7 8h10M7 12h10M7 16h6"/></svg>
+      Invoices</button>
+    <button data-view="fields" onclick="go('fields')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="1.6"/></svg>
+      Extraction fields</button>
+    <button data-view="telegram" onclick="go('telegram')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 3 3 10.5l6.5 2.3L18 6l-6 8 6.5 2.3L21 3z"/></svg>
+      Telegram intake</button>
+  </nav>
+  <div class="side-foot">
+    <div id="userBox" style="font-size:12px;color:var(--muted);padding:6px 8px;line-height:1.4;"></div>
+    <button onclick="openNewOrg()">+ New organization</button>
+    <button onclick="doLogout()">Sign out</button>
+  </div>
+</aside>
+
+<main>
+  <!-- OVERVIEW -->
+  <section id="view-overview">
+    <div class="topbar">
+      <div><h1 class="display">Overview</h1><div class="sub" id="ovSub"></div></div>
+      <div class="actions"><button class="btn" onclick="loadAll()">Refresh</button></div>
+    </div>
+    <div id="onboardBox"></div>
+    <div class="stats" id="statCards"></div>
+    <div class="panel"><h3>Top vendors by value</h3><div id="vendorBars"></div></div>
+    <div class="panel"><h3>Spend by month</h3><div id="monthBars"></div></div>
+  </section>
+
+  <!-- INVOICES -->
+  <section id="view-invoices" class="hidden">
+    <div class="topbar">
+      <div><h1 class="display">Invoices</h1><div class="sub" id="invSub"></div></div>
+      <div class="actions">
+        <button class="btn" id="bulkDeleteBtn" onclick="bulkDelete()" style="display:none; color:var(--bad); border-color:var(--bad-soft);">Delete selected</button>
+        <label class="btn primary" style="cursor:pointer;">Upload invoice
+          <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg" style="display:none" onchange="doUpload()">
+        </label>
+        <button class="btn" onclick="exportFile('xlsx','approved')">Export approved (Excel)</button>
+        <button class="btn" onclick="exportFile('csv','approved')">Export approved (CSV)</button>
+        <button class="btn" onclick="exportFile('csv','all')">Export all (CSV)</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="itable">
+        <thead><tr><th style="width:36px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"></th><th>Vendor</th><th>Invoice #</th><th>Date</th><th>Status</th><th style="text-align:right">Amount</th></tr></thead>
+        <tbody id="invBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FIELDS -->
+  <section id="view-fields" class="hidden">
+    <div class="topbar">
+      <div><h1 class="display">Extraction fields</h1><div class="sub">What this organization wants pulled from every invoice.</div></div>
+      <div class="actions"><button class="btn primary" onclick="openNewField()">+ Add field</button></div>
+    </div>
+    <div class="table-wrap"><table class="grid" id="fieldsTable"></table></div>
+  </section>
+
+  <!-- TELEGRAM -->
+  <section id="view-telegram" class="hidden">
+    <div class="topbar">
+      <div><h1 class="display">Telegram intake</h1><div class="sub">Link a Telegram chat so invoices sent there route to this organization.</div></div>
+      <div class="actions"><button class="btn primary" onclick="openNewLink()">+ Link a chat</button></div>
+    </div>
+    <div class="panel">
+      <p class="muted" style="font-size:13px; line-height:1.7; margin:0 0 12px;">
+        Start a chat with your bot and send <b>/start</b>. The bot replies with that chat's ID.
+        Paste the ID here to link it to <b id="tgOrgName"></b>. Unlinked chats are refused — that's the access control.
+      </p>
+      <div id="botInfoBox"></div>
+    </div>
+    <div class="table-wrap"><table class="grid" id="linksTable"></table></div>
+  </section>
+</main>
+
+<!-- Slide-over for invoice review -->
+<div class="scrim2" id="scrim2" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="dhead">
+    <div class="nav-arrows">
+      <button class="iconbtn" id="prevBtn" onclick="navInv(-1)" title="Previous invoice">‹ Prev</button>
+      <button class="iconbtn" id="nextBtn" onclick="navInv(1)" title="Next invoice">Next ›</button>
+    </div>
+    <span class="pos" id="drawerPos"></span>
+    <button class="iconbtn close" onclick="closeDrawer()" title="Close">✕</button>
+  </div>
+  <div class="dbody" id="drawerBody"></div>
+  <div class="dfoot" id="drawerFoot"></div>
+</div>
+
+<div id="modalRoot"></div>
+<div class="toast-stack" id="toastStack"></div>
+
+<script>
+const $ = (s)=>document.querySelector(s);
+let ORG=null, ORGS=[], INVOICES=[], FIELDSCFG=[], CURRENT_IDX=-1;
+const money = (n)=> (Number(n)||0).toLocaleString(undefined,{maximumFractionDigits:3});
+async function jget(u){ const r=await fetch(u); return r.json(); }
+async function jform(u,obj,method='POST'){ const fd=new FormData(); for(const k in obj) fd.append(k,obj[k]); const r=await fetch(u,{method,body:fd}); return r.json(); }
+
+function showToast(msg, type='success'){
+  const stack = $('#toastStack');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span class="tdot"></span>${esc(msg)}`;
+  stack.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(), 220); }, 2600);
+}
+
+async function boot(){
+  // Confirm we're logged in; if not, the server already redirects, but guard anyway.
+  try {
+    const meR = await fetch('/api/auth/me');
+    if(!meR.ok){ window.location='/login'; return; }
+    const me = await meR.json();
+    $('#userBox').textContent = me.email;
+  } catch(e){ window.location='/login'; return; }
+
+  ORGS = await jget('/api/orgs');
+  const sel=$('#orgSelect'); sel.innerHTML='';
+  ORGS.forEach(o=>{const opt=document.createElement('option');opt.value=o.id;opt.textContent=o.name;sel.appendChild(opt);});
+  if(ORGS.length){ ORG=ORGS[0].id; sel.value=ORG; await loadAll(); }
+}
+async function doLogout(){
+  await fetch('/api/auth/logout',{method:'POST'});
+  window.location='/login';
+}
+function onOrgChange(){ ORG=+$('#orgSelect').value; loadAll(); }
+async function loadAll(){ await Promise.all([loadOverview(), loadInvoices(), loadFields(), loadLinks()]); }
+function go(v){
+  ['overview','invoices','fields','telegram'].forEach(x=>$('#view-'+x).classList.toggle('hidden', x!==v));
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active', b.dataset.view===v));
+}
+
+// ---------- overview ----------
+async function loadOverview(){
+  const a = await jget(`/api/orgs/${ORG}/analytics`);
+  const orgName = ORGS.find(o=>o.id===ORG)?.name||'';
+  $('#ovSub').textContent = `${orgName} · ${a.total} invoices processed`;
+  $('#onboardBox').innerHTML = a.total>0 ? '' : `
+    <div class="onboard">
+      <h2 class="display">Get your first invoice in</h2>
+      <p>Upload a PDF or photo invoice and watch it turn into structured, reviewable data in seconds. No setup needed — sensible default fields are already active.</p>
+      <div class="steps">
+        <div class="step"><span class="num">1</span>Go to Invoices</div>
+        <div class="step"><span class="num">2</span>Click Upload invoice</div>
+        <div class="step"><span class="num">3</span>Review &amp; approve</div>
+      </div>
+      <button class="btn primary" onclick="go('invoices')">Go to Invoices →</button>
+    </div>`;
+  $('#statCards').innerHTML = `${stat('Total invoices',a.total)}${stat('Approved',a.approved)}${stat('Needs review',a.needs_review)}${stat('Duplicates',a.duplicates,a.duplicates>0)}${stat('Total value',money(a.total_value))}`;
+  $('#vendorBars').innerHTML = a.top_vendors.length ? bars(a.top_vendors.map(v=>({nm:v.vendor,amt:v.amount}))) : `<div class="muted" style="font-size:13px">No vendor data yet.</div>`;
+  $('#monthBars').innerHTML = a.by_month.length ? bars(a.by_month.map(m=>({nm:m.month,amt:m.amount}))) : `<div class="muted" style="font-size:13px">No dated invoices yet.</div>`;
+}
+function stat(k,v,flag=false){ return `<div class="stat ${flag?'flag':''}"><div class="k">${k}</div><div class="v tnum">${v}</div></div>`; }
+function bars(items){
+  const max=Math.max(...items.map(i=>i.amt),1);
+  return items.map(i=>`<div class="barrow"><div class="nm">${esc(i.nm)}</div><div class="track"><div class="fill" style="width:${Math.max(4,(i.amt/max)*100)}%"></div></div><div class="amt tnum">${money(i.amt)}</div></div>`).join('');
+}
+
+// ---------- invoices: table ----------
+async function loadInvoices(){
+  INVOICES = await jget(`/api/orgs/${ORG}/invoices`);
+  $('#invSub').textContent = `${INVOICES.length} total · ${INVOICES.filter(i=>i.status!=='approved').length} awaiting review`;
+  const body=$('#invBody');
+  SELECTED_IDS.clear(); updateBulkBar();
+  if($('#selectAll')) $('#selectAll').checked=false;
+  if(!INVOICES.length){ body.innerHTML='<tr><td colspan="6" class="empty">No invoices yet. Upload one, or send via Telegram.</td></tr>'; return; }
+  body.innerHTML = INVOICES.map((inv,idx)=>{
+    const f=inv.fields;
+    const pill = inv.status==='approved' ? '<span class="pill approved">Approved</span>' : '<span class="pill review">Needs review</span>';
+    const dup = inv.is_duplicate ? '<span class="pill dup">Duplicate</span>' : '';
+    return `<tr>
+      <td onclick="event.stopPropagation()"><input type="checkbox" class="rowcheck" data-id="${inv.id}" onchange="onRowCheck(${inv.id},this.checked)"></td>
+      <td onclick="openDrawer(${idx})"><div class="vname">${esc(f.vendor||'Unknown vendor')}</div><div class="vsub">via ${inv.source}</div></td>
+      <td onclick="openDrawer(${idx})">${esc(f.invoice_number||'—')}</td>
+      <td onclick="openDrawer(${idx})">${esc(f.date||'—')}</td>
+      <td onclick="openDrawer(${idx})">${pill}${dup}</td>
+      <td class="amt tnum" onclick="openDrawer(${idx})">${money(f.amount)}</td>
+    </tr>`;
+  }).join('');
+}
+let SELECTED_IDS = new Set();
+function onRowCheck(id, checked){ checked ? SELECTED_IDS.add(id) : SELECTED_IDS.delete(id); updateBulkBar(); }
+function toggleSelectAll(cb){
+  document.querySelectorAll('.rowcheck').forEach(c=>{ c.checked=cb.checked; onRowCheckLite(+c.dataset.id, cb.checked); });
+  updateBulkBar();
+}
+function onRowCheckLite(id, checked){ checked ? SELECTED_IDS.add(id) : SELECTED_IDS.delete(id); }
+function updateBulkBar(){
+  const btn=$('#bulkDeleteBtn');
+  if(SELECTED_IDS.size>0){ btn.style.display='inline-block'; btn.textContent=`Delete selected (${SELECTED_IDS.size})`; }
+  else{ btn.style.display='none'; }
+}
+async function bulkDelete(){
+  if(SELECTED_IDS.size===0) return;
+  if(!confirm(`Delete ${SELECTED_IDS.size} invoice(s)? This cannot be undone.`)) return;
+  await jform(`/api/orgs/${ORG}/invoices/bulk_delete`,{ids:[...SELECTED_IDS].join(',')});
+  showToast(`Deleted ${SELECTED_IDS.size} invoice(s).`);
+  await loadInvoices(); await loadOverview();
+}
+async function doUpload(){
+  const f=$('#fileInput').files[0]; if(!f) return;
+  const fd=new FormData(); fd.append('file',f);
+  $('#invSub').textContent='Extracting…';
+  showToast('Reading invoice and extracting fields…');
+  try{
+    await fetch(`/api/orgs/${ORG}/upload`,{method:'POST',body:fd});
+    showToast('Invoice extracted successfully.');
+  }catch(e){ showToast('Upload failed. Check your connection.','error'); }
+  $('#fileInput').value=''; await loadInvoices(); await loadOverview();
+}
+function exportFile(fmt,scope){ window.location=`/api/orgs/${ORG}/export?format=${fmt}&scope=${scope}`; }
+
+// ---------- drawer: single invoice focus, with prev/next ----------
+function openDrawer(idx){ CURRENT_IDX=idx; renderDrawer(); $('#scrim2').classList.add('open'); $('#drawer').classList.add('open'); }
+function closeDrawer(){ $('#scrim2').classList.remove('open'); $('#drawer').classList.remove('open'); }
+function navInv(delta){ const n=CURRENT_IDX+delta; if(n>=0 && n<INVOICES.length){ CURRENT_IDX=n; renderDrawer(); } }
+
+function renderDrawer(){
+  const inv = INVOICES[CURRENT_IDX]; if(!inv) return;
+  $('#drawerPos').textContent = `${CURRENT_IDX+1} of ${INVOICES.length}`;
+  $('#prevBtn').disabled = CURRENT_IDX<=0;
+  $('#nextBtn').disabled = CURRENT_IDX>=INVOICES.length-1;
+
+  const previewUrl = `/uploads/${inv.org_id}_${inv.filename}`;
+  const isImg = /\.(png|jpe?g|webp)$/i.test(inv.filename||'');
+
+  const fieldHtml = FIELDSCFG.filter(fc=>fc.active).map(fc=>{
+    const k=fc.field_key, val=inv.fields[k]??'', conf=inv.confidence[k]??0;
+    const low = conf>0 && conf<0.6;
+    const col = conf>=0.8?'var(--good)':conf>=0.6?'var(--warn)':conf>0?'var(--bad)':'var(--border-2)';
+    return `<div class="field ${low?'low':''}">
+      <div class="fl"><span>${esc(fc.label)} ${fc.required?'<span class="req">*</span>':''}</span>
+        <span class="cf">${conf>0?'<span class="confdot" style="background:'+col+'"></span>'+Math.round(conf*100)+'%':''}</span></div>
+      <input value="${esc(String(val))}" onchange="saveField(${inv.id},'${k}',this.value)">
+    </div>`;
+  }).join('');
+
+  const items = inv.line_items||[];
+  const itemsHtml = items.length ? `<div class="lineitems"><table>
+    <tr><th>Item</th><th>Qty</th><th>Price</th><th>Amount</th></tr>
+    ${items.map(li=>`<tr><td>${esc(li.description||'')}</td><td class="num">${esc(String(li.qty||''))}</td><td class="num tnum">${esc(String(li.unit_price||''))}</td><td class="num tnum">${esc(String(li.amount||''))}</td></tr>`).join('')}
+    </table></div>` : '';
+
+  const dupBanner = inv.is_duplicate ? `<div class="dupwarn">Possible duplicate of invoice #${inv.duplicate_of}</div>` : '';
+
+  $('#drawerBody').innerHTML = `
+    <h2 class="display">${esc(inv.fields.vendor||'Unknown vendor')}</h2>
+    <div class="dmeta">Invoice #${inv.id} · via ${inv.source} · ${inv.status}</div>
+    ${dupBanner}
+    <div class="preview">${isImg?`<img src="${previewUrl}" onerror="this.parentNode.innerHTML='<div class=empty>Preview unavailable</div>'">`:`<embed src="${previewUrl}" type="application/pdf">`}</div>
+    ${fieldHtml}
+    ${items.length?'<h3 style="font-size:13px;margin:16px 0 8px">Line items</h3>'+itemsHtml:''}
+    <div class="reext">
+      <input id="reextNote" placeholder="Re-extract hint, e.g. 'amount is total incl. VAT'">
+      <button class="btn" onclick="reextract(${inv.id})">Re-extract</button>
+    </div>
+    <button class="btn" style="width:100%" onclick="showHistory(${inv.id})">View history</button>
+  `;
+  $('#drawerFoot').innerHTML = `
+    <button class="btn" onclick="closeDrawer()">Close</button>
+    <button class="btn" style="color:var(--bad);" onclick="deleteInv(${inv.id})">Delete</button>
+    <button class="btn primary" onclick="approveInv(${inv.id})" ${inv.status==='approved'?'disabled':''}>
+      ${inv.status==='approved'?'Approved':'Approve'}</button>
+  `;
+}
+async function deleteInv(id){
+  if(!confirm('Delete this invoice permanently? This cannot be undone.')) return;
+  await fetch(`/api/invoices/${id}`, {method:'DELETE'});
+  showToast('Invoice deleted.');
+  closeDrawer();
+  await loadInvoices(); await loadOverview();
+}
+async function saveField(id,key,val){ await jform(`/api/invoices/${id}/correct`,{field_name:key,new_value:val}); showToast('Correction saved.'); await loadInvoices(); }
+async function reextract(id){
+  const note=$('#reextNote').value;
+  const btn=event.target;
+  btn.textContent='Working…'; btn.disabled=true;
+  const r = await jform(`/api/invoices/${id}/reextract`,{instruction:note});
+  if(r.diagnostic){
+    showToast(r.diagnostic, 'error');
+  } else {
+    showToast('Re-extracted with your instruction.');
+  }
+  btn.textContent='Re-extract'; btn.disabled=false;
+  await loadInvoices(); renderDrawer();
+}
+async function approveInv(id){ await jform(`/api/invoices/${id}/approve`,{}); showToast('Invoice approved.'); await loadInvoices(); await loadOverview(); renderDrawer(); }
+async function showHistory(id){
+  const rows = await jget(`/api/invoices/${id}/history`);
+  const body = rows.length ? rows.map(r=>`<div class="audit-item">
+    <div class="ah"><b style="color:var(--text);text-transform:capitalize">${r.action}</b><span>${fmtDate(r.changed_at)} · ${esc(r.changed_by)}</span></div>
+    <div class="chg"><span class="muted">${esc(r.field_name)}:</span> ${esc(short(r.old_value))} <span class="muted">→</span> <b>${esc(short(r.new_value))}</b></div>
+  </div>`).join('') : '<div class="empty">No changes recorded yet.</div>';
+  modal(`Invoice #${id} history`, body);
+}
+function short(s){ s=String(s); return s.length>90?s.slice(0,90)+'…':s; }
+
+// ---------- fields ----------
+async function loadFields(){
+  FIELDSCFG = await jget(`/api/orgs/${ORG}/fields`);
+  const t=$('#fieldsTable');
+  t.innerHTML = `<tr><th>Field key</th><th>Label</th><th>Hint</th><th>Flags</th><th></th></tr>` +
+    FIELDSCFG.map(f=>`<tr>
+      <td><code style="font-size:12px">${esc(f.field_key)}</code></td>
+      <td>${esc(f.label)}</td>
+      <td class="muted">${esc(f.hint||'—')}</td>
+      <td>${f.active?'<span class="tag on">Active</span>':'<span class="tag">Off</span>'}${f.required?'<span class="tag req">Required</span>':''}</td>
+      <td style="text-align:right"><button class="btn" onclick='openEditField(${JSON.stringify(f).replace(/'/g,"&#39;")})'>Edit</button></td>
+    </tr>`).join('');
+}
+async function loadLinks(){
+  const links = await jget(`/api/orgs/${ORG}/telegram`);
+  $('#tgOrgName').textContent = ORGS.find(o=>o.id===ORG)?.name||'';
+  renderBotInfo();
+  const t=$('#linksTable');
+  t.innerHTML = `<tr><th>Chat ID</th><th>Label</th><th>Linked</th><th></th></tr>` +
+    (links.length? links.map(l=>`<tr><td class="tnum">${esc(l.telegram_chat_id)}</td><td>${esc(l.label||'—')}</td><td class="muted">${fmtDate(l.created_at)}</td>
+      <td style="text-align:right"><button class="btn" style="color:var(--bad)" onclick="unlinkChat(${l.id})">Unlink</button></td></tr>`).join('')
+      : `<tr><td colspan="4" class="empty">No chats linked yet.</td></tr>`);
+}
+async function renderBotInfo(){
+  const box = $('#botInfoBox');
+  try {
+    const info = await jget('/api/telegram/bot-info');
+    if (info.username) {
+      box.innerHTML = `<a class="btn primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px"
+        href="https://t.me/${info.username}" target="_blank">Open @${info.username} on Telegram →</a>`;
+    } else if (info.configured) {
+      box.innerHTML = `<span class="muted" style="font-size:12.5px">Bot is starting up — its username will appear here shortly. Refresh in a moment.</span>`;
+    } else {
+      box.innerHTML = `<span class="muted" style="font-size:12.5px">No Telegram bot is connected yet. Ask the admin to set TELEGRAM_BOT_TOKEN.</span>`;
+    }
+  } catch(e) { box.innerHTML=''; }
+}
+async function unlinkChat(linkId){
+  if(!confirm('Unlink this chat? Invoices already received will stay, but new ones from this chat will be refused until relinked elsewhere.')) return;
+  await fetch(`/api/orgs/${ORG}/telegram/${linkId}`, {method:'DELETE'});
+  showToast('Chat unlinked.');
+  loadLinks();
+}
+
+// ---------- modals ----------
+function modal(title, bodyHtml){
+  $('#modalRoot').innerHTML = `<div class="scrim" onclick="if(event.target===this)closeModal()"><div class="modal"><h3>${title}</h3>${bodyHtml}</div></div>`;
+}
+function closeModal(){ $('#modalRoot').innerHTML=''; }
+function openNewOrg(){
+  modal('New organization', `
+    <div class="field"><label>Company name</label><input type="text" id="m_name" placeholder="Acme Trading LLC"></div>
+    <div class="field"><label>Short slug</label><input type="text" id="m_slug" placeholder="acme"></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="createOrg()">Create</button></div>`);
+}
+async function createOrg(){
+  const name=$('#m_name').value.trim(), slug=$('#m_slug').value.trim(); if(!name||!slug) return;
+  const r=await jform('/api/orgs',{name,slug});
+  closeModal(); ORGS=await jget('/api/orgs');
+  const sel=$('#orgSelect'); sel.innerHTML=''; ORGS.forEach(o=>{const opt=document.createElement('option');opt.value=o.id;opt.textContent=o.name;sel.appendChild(opt);});
+  ORG=r.id; sel.value=ORG; showToast(`"${name}" created.`); loadAll();
+}
+function openNewField(){
+  modal('Add extraction field', `
+    <div class="field"><label>Field key</label><input type="text" id="m_key" placeholder="vehicle_number"></div>
+    <div class="field"><label>Label</label><input type="text" id="m_label" placeholder="Vehicle Number"></div>
+    <div class="field"><label>Hint for the AI (optional)</label><input type="text" id="m_hint" placeholder="The plate number"></div>
+    <div class="row"><input type="checkbox" id="m_req"><label style="margin:0">Required field</label></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="createField()">Add field</button></div>`);
+}
+async function createField(){
+  const field_key=$('#m_key').value.trim(), label=$('#m_label').value.trim(); if(!field_key||!label) return;
+  await jform(`/api/orgs/${ORG}/fields`,{field_key,label,hint:$('#m_hint').value.trim(),required:$('#m_req').checked?1:0});
+  closeModal(); showToast(`Field "${label}" added.`); loadFields();
+}
+function openEditField(f){
+  modal('Edit field', `
+    <div class="field"><label>Field key</label><input type="text" value="${esc(f.field_key)}" disabled style="opacity:.6"></div>
+    <div class="field"><label>Label</label><input type="text" id="e_label" value="${esc(f.label)}"></div>
+    <div class="field"><label>Hint</label><input type="text" id="e_hint" value="${esc(f.hint||'')}"></div>
+    <div class="row" style="gap:16px"><label class="row" style="gap:6px"><input type="checkbox" id="e_req" ${f.required?'checked':''}> Required</label>
+      <label class="row" style="gap:6px"><input type="checkbox" id="e_act" ${f.active?'checked':''}> Active</label></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveFieldEdit(${f.id})">Save</button></div>`);
+}
+async function saveFieldEdit(id){
+  await jform(`/api/fields/${id}`,{label:$('#e_label').value.trim(),hint:$('#e_hint').value.trim(),required:$('#e_req').checked?1:0,active:$('#e_act').checked?1:0},'PUT');
+  closeModal(); showToast('Field updated.'); loadFields();
+}
+function openNewLink(){
+  modal('Link a Telegram chat', `
+    <p class="muted" style="font-size:12.5px;margin:0 0 14px">Send <b>/start</b> to your bot, copy the chat ID, paste below.</p>
+    <div class="field"><label>Telegram chat ID</label><input type="text" id="l_id" placeholder="123456789"></div>
+    <div class="field"><label>Label (optional)</label><input type="text" id="l_label" placeholder="Accounts dept"></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="createLink()">Link chat</button></div>`);
+}
+async function createLink(){
+  const id=$('#l_id').value.trim(); if(!id) return;
+  const r=await jform(`/api/orgs/${ORG}/telegram`,{telegram_chat_id:id,label:$('#l_label').value.trim()});
+  if(r.detail){ showToast(r.detail,'error'); return; }
+  closeModal(); showToast('Telegram chat linked.'); loadLinks();
+}
+
+// keyboard nav for the drawer
+document.addEventListener('keydown', e=>{
+  if(!$('#drawer').classList.contains('open')) return;
+  if(e.key==='ArrowRight') navInv(1);
+  if(e.key==='ArrowLeft') navInv(-1);
+  if(e.key==='Escape') closeDrawer();
+});
+
+function esc(s){ return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function fmtDate(iso){ if(!iso) return ''; try{ return new Date(iso).toLocaleString(); }catch{ return iso; } }
+boot();
+</script>
+</body>
+</html>
