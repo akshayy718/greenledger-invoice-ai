@@ -1,88 +1,151 @@
 <div align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0,1F6F4F,2B8A63,15553D&height=200&section=header&fontSize=42&fontColor=fff&animation=fadeIn&fontAlignY=36" width="100%"/>
+</div>
 
-<img src="https://img.shields.io/badge/Status-Live-1F6F4F?style=for-the-badge" />
-<img src="https://img.shields.io/badge/Python-3.12-1F6F4F?style=for-the-badge&logo=python&logoColor=white" />
-<img src="https://img.shields.io/badge/FastAPI-Backend-1F6F4F?style=for-the-badge&logo=fastapi&logoColor=white" />
-<img src="https://img.shields.io/badge/Groq-Vision%20AI-1F6F4F?style=for-the-badge" />
-<img src="https://img.shields.io/badge/Telegram-Bot-1F6F4F?style=for-the-badge&logo=telegram&logoColor=white" />
+<div align="center">
 
-<br/><br/>
+<pre>
+ ██████╗ ██████╗ ███████╗███████╗███╗   ██╗██╗     ███████╗██████╗  ██████╗ 
+██╔════╝ ██╔══██╗██╔════╝██╔════╝████╗  ██║██║     ██╔════╝██╔══██╗██╔════╝ 
+██║  ███╗██████╔╝█████╗  █████╗  ██╔██╗ ██║██║     █████╗  ██║  ██║██║  ███╗
+██║   ██║██╔══██╗██╔══╝  ██╔══╝  ██║╚██╗██║██║     ██╔══╝  ██║  ██║██║   ██║
+╚██████╔╝██║  ██║███████╗███████╗██║ ╚████║███████╗███████╗██████╔╝╚██████╔╝
+ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝╚══════╝╚══════╝╚═════╝  ╚═════╝ 
 
-<h1>🌿 Greenledger AI</h1>
+███████╗██████╗ 
+██╔════╝██╔══██╗
+█████╗  ██████╔╝
+██╔══╝  ██╔══██╗
+███████╗██║  ██║
+╚══════╝╚═╝  ╚═╝
+</pre>
 
-<p><b>An AI-powered invoice intake, review, and approval system —<br/>built with configurable extraction, multi-tenant auth, and a live Telegram bot.</b></p>
+### 🚀 Live App → **[greenledger-invoice-ai.onrender.com](https://greenledger-invoice-ai.onrender.com)**
 
-<p>
-  <a href="https://greenledger-invoice-ai.onrender.com"><b>🔗 Live Demo</b></a> ·
-  <a href="#-features">Features</a> ·
-  <a href="#-architecture">Architecture</a> ·
-  <a href="#-running-locally">Run locally</a> ·
-  <a href="#-honest-limitations">Limitations</a>
-</p>
+[![Live App](https://img.shields.io/badge/▶_Open_Live_App-greenledger--invoice--ai.onrender.com-1F6F4F?style=for-the-badge&logo=render&logoColor=white)](https://greenledger-invoice-ai.onrender.com)
+[![Groq Vision](https://img.shields.io/badge/🤖_Groq-Llama_4_Vision-2B8A63?style=for-the-badge)](https://console.groq.com)
+[![GitHub](https://img.shields.io/badge/GitHub-akshayy718-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/akshayy718)
 
 </div>
 
-<br/>
+<div align="center">
 
-> **Demo note:** hosted on a free tier, so the app may take 30–60 seconds to wake up on first load, and data resets periodically. Login: `demo@greenledger.ai` / `demo1234` — or sign up fresh, it's instant.
+![Python](https://img.shields.io/badge/Python-3.12-1F6F4F?style=flat-square&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-1F6F4F?style=flat-square&logo=fastapi&logoColor=white)
+![Groq](https://img.shields.io/badge/Groq-Vision_+_Text_AI-2B8A63?style=flat-square)
+![Telegram](https://img.shields.io/badge/Telegram-Bot_API-1F6F4F?style=flat-square&logo=telegram&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-Database-15553D?style=flat-square&logo=sqlite&logoColor=white)
+![Auth](https://img.shields.io/badge/Auth-Sessions_+_PBKDF2-2B8A63?style=flat-square)
+![Hosted](https://img.shields.io/badge/Hosted-Render-1F6F4F?style=flat-square&logo=render&logoColor=white)
+
+</div>
+
+*First load on the live demo may take ~30–60s (free-tier hosting wakes from sleep), and data resets periodically — this is a free-tier limitation, not a bug. Demo login: `demo@greenledger.ai` / `demo1234`, or sign up fresh in seconds.*
 
 ---
 
-## 📌 The problem
+## 📌 Why this project is different
 
-Every business handles invoices differently — different fields, different formats, different review processes. Most "AI invoice extraction" demos hardcode a fixed set of fields and assume every document looks the same. **Greenledger doesn't.**
+Most "AI invoice extraction" demos hardcode a fixed set of fields and assume every document looks the same. **Greenledger doesn't.**
 
-It's built around one core idea: **an admin defines what fields matter for their organization** — vendor, invoice number, tax, vehicle number, PO number, whatever — and the AI extracts exactly that, with confidence scores so a human knows what to double-check. Every correction is logged. Nothing gets approved silently.
+It's built around one idea: **an admin defines what fields actually matter for their organization** — vendor, invoice number, tax, vehicle number, PO number, whatever — and the AI extracts exactly that, with a confidence score on every field so a human knows what to double-check. Nothing gets approved silently, and every correction is logged.
+
+It also doesn't pretend OCR is good enough. Photos go straight to a **vision-capable LLM** that reads the image directly — the same reason it can correctly read a blurry, crumpled, hand-photographed receipt that traditional OCR returns blank on.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph LR
+    T["📷 Telegram<br/>(photo / file)"] -->|long polling| B["🤖 telegram_bot.py"]
+    W["🖥️ Web Upload"] --> M
+    B --> M["⚙️ main.py<br/>(FastAPI)"]
+    M -->|require_org_access| AU["🔐 Auth & Sessions<br/>PBKDF2 + cookies"]
+    M --> E["🧠 extraction.py"]
+    E -->|image| GV["👁️ Groq Vision<br/>Llama 4 Scout"]
+    E -->|typed PDF text| GT["📄 Groq Text<br/>Llama 3.3 70B"]
+    M --> D["🗄️ db.py (SQLite)<br/>users · orgs · memberships<br/>invoices · fields · audit_log"]
+    D --> UI["📊 Dashboard<br/>review · approve · export"]
+
+    style M fill:#1F6F4F,color:#fff
+    style E fill:#2B8A63,color:#fff
+    style D fill:#15553D,color:#fff
+    style AU fill:#15553D,color:#fff
+```
+
+**One pipeline, two entry points.** Telegram and the web upload both call the exact same `process_invoice_file()` function — a photo sent from a phone gets identical treatment to a file dropped in the browser, including the same duplicate check, same confidence scoring, same audit logging.
+
+---
 
 ## ✨ Features
 
 | | |
 |---|---|
-| 🔐 **Real authentication** | Email/password signup, salted password hashing (PBKDF2), session cookies. Every organization's data is access-controlled — users can only ever see orgs they belong to. |
-| 🏢 **Multi-tenant from the ground up** | One login can own multiple organizations. Each org has its own invoices, fields, and Telegram routing — fully isolated. |
-| 🧩 **Configurable extraction fields** | No hardcoded schema. Add, edit, or deactivate fields per organization, with optional hints that steer the AI ("this is the long number labeled Invoice No, not Receipt No"). |
-| 👁️ **Vision-model AI extraction** | Photos and PDFs are sent directly to a vision-capable LLM (Groq · Llama 4 Scout) instead of brittle OCR — it *reads* a blurry receipt the way a person would, auto-rotating sideways phone photos first. |
-| 🎯 **Confidence scores** | Every extracted field shows how sure the AI is. Low-confidence fields are visibly flagged so a reviewer knows exactly what to check. |
-| 🧾 **Line-item extraction** | Pulls the actual billed items — description, qty, price, amount — not just header totals. |
-| 🔁 **Re-extraction with hints** | Got a field wrong? Type a correction hint and re-run extraction on the same document instead of fixing it by hand every time. |
+| 🔐 **Real authentication** | Email/password signup, PBKDF2-hashed passwords (never plaintext), server-side sessions. Every org-scoped endpoint checks membership before returning data. |
+| 🏢 **True multi-tenant isolation** | One login, many organizations — each with its own invoices, fields, and Telegram routing. Verified with a deliberate test: a second user gets a `403` trying to touch the first user's org. |
+| 🧩 **Configurable extraction fields** | No hardcoded schema. Add, edit, deactivate fields per org, with optional hints that steer the AI ("this is the long number labeled Invoice No, not Receipt No"). |
+| 👁️ **Vision-model extraction** | Images go straight to a vision LLM instead of OCR — reads blurry, angled, real-world photos the way a person would. Auto-corrects sideways phone photos via EXIF before sending. |
+| 🎯 **Confidence scores** | Every field shows how sure the AI is. Low-confidence fields are visibly flagged for review — never silently trusted. |
+| 🧾 **Line-item extraction** | Pulls individual billed items — description, qty, price, amount — not just header totals. |
+| 🔁 **Re-extraction with hints** | Wrong field? Type a correction hint and re-run extraction on the same document instead of typing the fix by hand every time. |
 | 🔍 **Duplicate detection** | Fingerprints vendor + invoice number + amount to flag likely-duplicate submissions automatically. |
-| 🤖 **Live Telegram bot** | Send an invoice as a photo or document straight from your phone. The bot reads it, replies with a summary, and routes it to the right organization by chat ID — unlinked chats are refused. |
-| 📝 **Full audit trail** | Every correction, re-extraction, and approval is logged with who changed what, old value → new value, and a timestamp. |
-| 📊 **Analytics dashboard** | Totals, approval status, spend by vendor, spend by month — at a glance. |
-| 📤 **Clean export** | One click to Excel or CSV, scoped to approved-only or everything, ready to hand to accounting. |
+| 🤖 **Live Telegram bot** | Send an invoice straight from your phone. The bot replies with a summary and routes it by chat ID — unlinked chats are refused outright. |
+| 📝 **Full audit trail** | Every correction, re-extraction, and approval logged — old value → new value, who, when. |
+| 📊 **Analytics** | Totals, approval status, spend by vendor, spend by month. |
+| 📤 **Clean export** | One click to Excel or CSV — approved-only or everything — ready for accounting. |
 
-## 🏗️ Architecture
+---
 
-```
-                    ┌──────────────┐
-   Telegram photo ─►│              │
-                     │   main.py    │──────► extraction.py ──► Groq Vision/Text AI
-   Web upload ──────►│  (FastAPI)   │           ▲  reads PDF/image,
-                     │              │           │  routes to the right model
-                     └──────┬───────┘           │
-                            │                    │
-                            ▼                    │
-                      db.py (SQLite) ◄────────────┘
-                  users · orgs · memberships
-              invoices · extraction_fields · audit_log
-                            │
-                            ▼
-                 static/index.html (dashboard)
-          review · approve · analytics · export · auth
-```
+## 🐛 Real bugs found and fixed while building this
 
-Both intake channels — Telegram and web upload — call the **same** `process_invoice_file()` function, so a photo sent from a phone gets identical treatment to a file dropped in the browser.
+These showed up against real usage, not in theory — each one taught something:
+
+- **OCR returning blank on real-world photos** — Tesseract reliably failed on compressed, angled phone photos of receipts. Root cause wasn't fixable with image preprocessing alone; the actual fix was architectural — switching images to a **vision model** that reads the picture directly instead of OCR-then-read-text.
+- **Sideways receipts** — a folded, photographed-at-an-angle receipt was being read upside down. Fixed by reading the image's EXIF orientation and auto-rotating before sending it to the AI.
+- **Silent extraction failures** — when the AI call failed (missing key, bad image, rate limit), the app returned blank fields with zero explanation, making a real failure look identical to "the AI just didn't find anything." Fixed by surfacing a specific `diagnostic` string all the way to the UI (and the Telegram reply), so a failure says exactly why.
+- **Fresh deploy crash** — `uploads/` is excluded from git (it holds user files), so a brand-new clone or deploy had no such folder, and the app crashed on startup trying to serve static files from a directory that didn't exist. Fixed with `os.makedirs(..., exist_ok=True)` before mounting it.
+- **Cross-tenant data leak risk** — early versions trusted the `org_id` in the URL without checking who was asking. Closed by adding `require_org_access()` to every single org-scoped endpoint, and verified with a real test: a second account gets `403` trying to read the first account's invoices.
+- **Cookie security vs. local dev** — marking the session cookie `secure` breaks login on plain `http://127.0.0.1` during local testing, but is required once deployed behind HTTPS. Fixed with an `IS_PRODUCTION` flag that auto-detects the hosting environment.
+
+---
 
 ## 🛠️ Tech stack
 
-- **Backend:** FastAPI (Python), SQLite
-- **AI:** Groq API — vision model for images, text model for typed PDFs
-- **Bot:** Telegram Bot API (long polling), running in a background thread alongside the web server
-- **Frontend:** Vanilla HTML/CSS/JS — no framework, no build step
-- **Auth:** PBKDF2 password hashing, server-side sessions via httponly cookies
-- **Deployment:** Render
+<div align="center">
 
-## 🚀 Running locally
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Backend** | FastAPI (Python) | Routing, auth, business logic |
+| **Database** | SQLite | Users, orgs, invoices, audit log |
+| **AI — Vision** | Groq · Llama 4 Scout | Reads photos/scanned documents directly |
+| **AI — Text** | Groq · Llama 3.3 70B | Reads typed PDF text layers |
+| **Bot** | Telegram Bot API (long polling) | Phone-based invoice intake |
+| **Auth** | PBKDF2 + httponly session cookies | Password hashing, login sessions |
+| **Frontend** | Vanilla HTML / CSS / JS | No framework, no build step |
+| **Hosting** | Render | Auto-deploy from GitHub |
+
+</div>
+
+---
+
+## 📁 Project structure
+
+```
+greenledger-invoice-ai/
+├── main.py            → FastAPI app: routes, auth, org access control
+├── db.py               → SQLite schema, password hashing, sessions
+├── extraction.py        → File reading + AI extraction (vision & text paths)
+├── telegram_bot.py      → Long-polling bot, shares the extraction pipeline
+├── static/
+│   ├── index.html       → Dashboard (single-page, vanilla JS)
+│   └── login.html        → Sign in / sign up
+└── requirements.txt
+```
+
+---
+
+## ⚡ Quick start
 
 ```bash
 git clone https://github.com/akshayy718/greenledger-invoice-ai.git
@@ -90,47 +153,62 @@ cd greenledger-invoice-ai
 
 pip install -r requirements.txt
 
-# set your keys
-export GROQ_API_KEY="your_groq_key"            # free at console.groq.com
-export TELEGRAM_BOT_TOKEN="your_bot_token"      # optional — from @BotFather
+export GROQ_API_KEY="your_groq_key"        # free at console.groq.com
+export TELEGRAM_BOT_TOKEN="your_bot_token"  # optional — from @BotFather
 
 uvicorn main:app --reload
 ```
 
-Open `http://127.0.0.1:8000` — it redirects to a login page. Sign up, or use the auto-created demo login (`demo@greenledger.ai` / `demo1234`).
-
-## 📁 Project structure
-
-```
-greenledger-invoice-ai/
-├── main.py            # FastAPI app — all routes, auth, org access control
-├── db.py               # SQLite schema, password hashing, session helpers
-├── extraction.py        # File reading + AI extraction (vision & text paths)
-├── telegram_bot.py      # Telegram long-polling bot, shares the extraction pipeline
-├── static/
-│   ├── index.html       # The dashboard (single-page, vanilla JS)
-│   └── login.html        # Sign in / sign up
-└── requirements.txt
-```
-
-## 🔍 What I'd build next
-
-- Switch the Telegram bot from polling to **webhooks** — more efficient, and works on hosts that don't allow always-on background tasks.
-- Self-service org linking (right now, a user must already be logged in to link a Telegram chat to *their own* org — there's no public invite flow for a stranger to join someone else's org).
-- A proper relational database (Postgres) instead of SQLite, for real concurrent multi-user load.
-
-## ⚠️ Honest limitations
-
-- **Free-tier hosting** means the app sleeps after 15 minutes of inactivity (30–60s cold start) and the filesystem resets on restart — fine for a demo, not for production data.
-- **Vision-model accuracy isn't perfect** on dense, cluttered, or extremely low-quality photos — the confidence scores and human-review step exist specifically because no AI extraction system gets every field right on every document. Built deliberately around verify-then-approve, not blind trust.
-- **Telegram chat ↔ org linking is admin-only** — there's no public signup flow for a new chat to self-link to an org without already having dashboard access.
-
-## 👤 Author
-
-**Akshay Santhosh**
-B.Tech Computer Science (AI), Jain University · AI/ML Engineer & SAP BTP Developer
-[GitHub](https://github.com/akshayy718) · akshaysanthosh718@gmail.com
+Open `http://127.0.0.1:8000` → redirects to login → sign up, or use the auto-created demo account (`demo@greenledger.ai` / `demo1234`).
 
 ---
 
-<div align="center"><sub>Built end-to-end — backend, AI pipeline, bot integration, auth, and deployment — as a real working system, not a tutorial demo.</sub></div>
+## 🎯 Things to try
+
+| You do | What happens | Why it matters |
+|---|---|---|
+| Upload a clean PDF invoice | Every field extracts near-instantly at high confidence | The fast path — typed text, no AI guesswork needed |
+| Send a receipt photo to the Telegram bot | Bot reads the image directly via vision AI, replies with a summary | Same pipeline as web upload, different entry point |
+| Add a custom field in *Extraction Fields* | Next extraction includes it automatically | No hardcoded schema — the org defines its own shape |
+| Type a hint and hit *Re-extract* | AI re-reads the same document with your correction in mind | Fixes systematic misreads without manual typing |
+| Click *View history* on any invoice | Every edit, old → new, who, when | Real audit trail, not just a status flag |
+| Sign up a second account | Lands in a brand-new, empty, fully isolated org | Multi-tenant by design, not by convention |
+
+---
+
+## 🔮 Future improvements
+
+- [ ] Switch the Telegram bot from polling to **webhooks** — works on hosts that disallow always-on background tasks
+- [ ] Self-service org invites — right now, linking a Telegram chat requires already being logged into the target org
+- [ ] Postgres instead of SQLite, for real concurrent multi-user load
+- [ ] Per-organization branding / custom field templates by industry
+
+---
+
+## ⚠️ Honest limitations
+
+- **Free-tier hosting** — the app sleeps after 15 minutes idle (30–60s cold start) and the filesystem resets on restart. Fine for a demo, not for production data.
+- **Vision AI isn't perfect** — dense, cluttered, or extremely low-quality photos can still produce a missed field. That's exactly why confidence scores and human review exist — verify-then-approve, not blind trust.
+- **Telegram linking is admin-only** — a chat must be linked by someone already logged into the target org; there's no public self-link flow yet.
+
+---
+
+## 👨‍💻 Author
+
+<div align="center">
+
+**Akshay Santhosh** — AI/ML Engineer · SAP BTP Developer
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Akshay%20Santhosh-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/akshay-santhosh-435499208/)
+[![GitHub](https://img.shields.io/badge/GitHub-akshayy718-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/akshayy718)
+[![Gmail](https://img.shields.io/badge/Gmail-akshaysanthosh718-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:akshaysanthosh718@gmail.com)
+
+</div>
+
+<div align="center">
+
+*Built with ❤️ using Python · FastAPI · Groq Vision AI · Telegram Bot API*
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0,15553D,2B8A63,1F6F4F&height=130&section=footer&animation=fadeIn" width="100%"/>
+
+</div>
