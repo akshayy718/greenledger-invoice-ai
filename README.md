@@ -1,30 +1,14 @@
 <div align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0,1F6F4F,2B8A63,15553D&height=200&section=header&fontSize=42&fontColor=fff&animation=fadeIn&fontAlignY=36" width="100%"/>
-</div>
 
-<div align="center">
+<h1>🌿 Greenledger AI</h1>
 
-<pre>
- ██████╗ ██████╗ ███████╗███████╗███╗   ██╗██╗     ███████╗██████╗  ██████╗ 
-██╔════╝ ██╔══██╗██╔════╝██╔════╝████╗  ██║██║     ██╔════╝██╔══██╗██╔════╝ 
-██║  ███╗██████╔╝█████╗  █████╗  ██╔██╗ ██║██║     █████╗  ██║  ██║██║  ███╗
-██║   ██║██╔══██╗██╔══╝  ██╔══╝  ██║╚██╗██║██║     ██╔══╝  ██║  ██║██║   ██║
-╚██████╔╝██║  ██║███████╗███████╗██║ ╚████║███████╗███████╗██████╔╝╚██████╔╝
- ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝╚══════╝╚══════╝╚═════╝  ╚═════╝ 
-
-███████╗██████╗ 
-██╔════╝██╔══██╗
-█████╗  ██████╔╝
-██╔══╝  ██╔══██╗
-███████╗██║  ██║
-╚══════╝╚═╝  ╚═╝
-</pre>
-
-### 🚀 Live App → **[greenledger-invoice-ai.onrender.com](https://greenledger-invoice-ai.onrender.com)**
+<p><b>An AI-powered invoice intake, review, and approval system —<br/>configurable extraction, multi-tenant auth, and a live Telegram bot.</b></p>
 
 [![Live App](https://img.shields.io/badge/▶_Open_Live_App-greenledger--invoice--ai.onrender.com-1F6F4F?style=for-the-badge&logo=render&logoColor=white)](https://greenledger-invoice-ai.onrender.com)
 [![Groq Vision](https://img.shields.io/badge/🤖_Groq-Llama_4_Vision-2B8A63?style=for-the-badge)](https://console.groq.com)
-[![GitHub](https://img.shields.io/badge/GitHub-akshayy718-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/akshayy718)
+[![GitHub](https://img.shields.io/badge/GitHub-akshayy718-15553D?style=for-the-badge&logo=github&logoColor=white)](https://github.com/akshayy718)
+
+🚀 Live App → [greenledger-invoice-ai.onrender.com](https://greenledger-invoice-ai.onrender.com/)
 
 </div>
 
@@ -199,16 +183,14 @@ Open `http://127.0.0.1:8000` → redirects to login → sign up, or use the auto
 
 **Akshay Santhosh** — AI/ML Engineer · SAP BTP Developer
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Akshay%20Santhosh-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/akshay-santhosh-435499208/)
-[![GitHub](https://img.shields.io/badge/GitHub-akshayy718-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/akshayy718)
-[![Gmail](https://img.shields.io/badge/Gmail-akshaysanthosh718-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:akshaysanthosh718@gmail.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Akshay%20Santhosh-1F6F4F?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/akshay-santhosh-435499208/)
+[![GitHub](https://img.shields.io/badge/GitHub-akshayy718-15553D?style=for-the-badge&logo=github&logoColor=white)](https://github.com/akshayy718)
+[![Gmail](https://img.shields.io/badge/Gmail-akshaysanthosh718-2B8A63?style=for-the-badge&logo=gmail&logoColor=white)](mailto:akshaysanthosh718@gmail.com)
 
 </div>
 
 <div align="center">
 
 *Built with ❤️ using Python · FastAPI · Groq Vision AI · Telegram Bot API*
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0,15553D,2B8A63,1F6F4F&height=130&section=footer&animation=fadeIn" width="100%"/>
 
 </div>
